@@ -1,6 +1,7 @@
 DEBUG = 0
 FRONTEND_SUPPORTS_RGB565 = 1
 FRONTEND_SUPPORTS_XRGB8888 = 0
+EMULATORJS_THREADS ?= 0
 
 TARGET_NAME := handy
 GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
@@ -368,6 +369,11 @@ else ifneq (,$(findstring armv,$(platform)))
 else ifeq ($(platform), emscripten)
 	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
 	STATIC_LINKING = 1
+	ifeq ($(EMULATORJS_THREADS), 1)
+		LDFLAGS += -pthread
+		CFLAGS += -pthread
+		CXXFLAGS += -pthread
+	endif
 
 # Windows MSVC 2010 x64
 else ifeq ($(platform), windows_msvc2010_x64)
